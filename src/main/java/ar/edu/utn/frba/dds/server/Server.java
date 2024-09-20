@@ -1,11 +1,16 @@
 package ar.edu.utn.frba.dds.server;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
+import io.javalin.json.JavalinJackson;
 
 public class Server {
-    public static void main(String[] args) {
-        var app = Javalin.create(/*config*/)
-                .get("/", ctx -> ctx.result("Hello World"))
-                .start(9001);
+    public void start() {
+        Bootstrap.init();
+        var app = Javalin.create();
+        new Router().configure(app);
+        app.start(9001);
     }
 }
