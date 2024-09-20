@@ -9,7 +9,12 @@ import io.javalin.json.JavalinJackson;
 public class Server {
     public void start() {
         Bootstrap.init();
-        var app = Javalin.create();
+        var app = Javalin.create(config -> {
+            config.staticFiles.add(staticFileConfig -> {
+                staticFileConfig.hostedPath = "/assets";
+                staticFileConfig.directory = "/assets";
+            });
+        });
         new Router().configure(app);
         app.start(9001);
     }
