@@ -9,12 +9,14 @@ public class Pokemon {
 	private String nombre;
 	private Pokemon evolucion;
 	private List<String> fotos;
+	private int pokedexNumber;
 
-	public Pokemon(TipoPokemon tipo, String nombre, Pokemon evolucion) {
+	public Pokemon(int pokedexNumber, String nombre, TipoPokemon tipo, Pokemon evolucion) {
 		super();
 		this.tipo = tipo;
 		this.nombre = nombre;
 		this.evolucion = evolucion;
+		this.pokedexNumber = pokedexNumber;
 		this.fotos = new ArrayList<>();
 	}
 
@@ -29,14 +31,9 @@ public class Pokemon {
 	public Pokemon getEvolucion() {
 		return evolucion;
 	}
-	
-	public Pokemon agregarFoto(String url) {
-		this.fotos.add(url);
-		return this;
-	}
 
 	public String principalImage() {
-		return this.fotos.get(0);
+		return String.format("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/%d.svg", this.pokedexNumber);
 	}
 
 	@Override

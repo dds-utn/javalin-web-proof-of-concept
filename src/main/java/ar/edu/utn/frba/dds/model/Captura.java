@@ -1,8 +1,11 @@
 package ar.edu.utn.frba.dds.model;
 
+import ar.edu.utn.frba.dds.utils.RandomDateGenerator;
 import com.github.jknack.handlebars.internal.lang3.StringUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 
 public class Captura {
 
@@ -16,7 +19,7 @@ public class Captura {
 		this.apodo = apodo;
 		this.pokemon = pokemon;
 		this.nivel = nivel;
-		this.fechaCaptura = LocalDateTime.now();
+		this.fechaCaptura = RandomDateGenerator.get();
 	}
 
 	public String getApodo() {
@@ -34,6 +37,8 @@ public class Captura {
 	public LocalDateTime getFechaCaptura() {
 		return fechaCaptura;
 	}
+
+	public boolean getNuevo(){ return Period.between(fechaCaptura.toLocalDate(), LocalDate.now()).getDays() <= 1;  }
 
 	@Override
 	public String toString() {

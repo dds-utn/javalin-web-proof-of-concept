@@ -2,6 +2,8 @@ package ar.edu.utn.frba.dds.model;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class Usuario {
@@ -34,7 +36,7 @@ public class Usuario {
 	}
 
 	public void capturar(Pokemon pokemon) {
-		this.capturas.add(new Captura(pokemon.getNombre(), pokemon, 10));
+		this.capturas.add(new Captura(pokemon.getNombre(), pokemon, ThreadLocalRandom.current().nextInt(0, 100)));
 	}
 
 	@Override
