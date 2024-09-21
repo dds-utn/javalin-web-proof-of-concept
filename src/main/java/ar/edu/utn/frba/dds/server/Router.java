@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.server;
 
+import ar.edu.utn.frba.dds.controllers.HomeController;
 import io.javalin.Javalin;
 
 public class Router {

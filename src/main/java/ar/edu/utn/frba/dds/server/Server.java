@@ -1,5 +1,8 @@
 package ar.edu.utn.frba.dds.server;
 
+import ar.edu.utn.frba.dds.scripts.Bootstrap;
+import ar.edu.utn.frba.dds.server.templates.JavalinHandlebars;
+import ar.edu.utn.frba.dds.server.templates.JavalinRenderer;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 

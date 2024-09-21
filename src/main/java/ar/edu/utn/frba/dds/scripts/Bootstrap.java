@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.scripts;
 
 import ar.edu.utn.frba.dds.model.Pokemon;
 import ar.edu.utn.frba.dds.model.TipoPokemon;

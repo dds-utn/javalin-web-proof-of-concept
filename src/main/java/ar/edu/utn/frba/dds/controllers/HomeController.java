@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.model.Captura;
 import ar.edu.utn.frba.dds.model.Usuario;

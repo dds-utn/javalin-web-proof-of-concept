@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.server;
 
-import io.javalin.Javalin;
+import ar.edu.utn.frba.dds.scripts.Bootstrap;
 
 public class App {
 
