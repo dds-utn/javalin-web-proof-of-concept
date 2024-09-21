@@ -1,5 +1,7 @@
 package ar.edu.utn.frba.dds.model;
 
+import com.github.jknack.handlebars.internal.lang3.StringUtils;
+
 import java.time.LocalDateTime;
 
 public class Captura {
@@ -37,6 +39,10 @@ public class Captura {
 	public String toString() {
 		return "PokemonCapturado [nombre=" + apodo + ", pokemon=" + pokemon + ", nivel=" + nivel + ", fechaCaptura="
 				+ fechaCaptura + "]";
+	}
+
+	public boolean sePareceNombreA(String nombre) {
+		return StringUtils.startsWithIgnoreCase(this.apodo, nombre);
 	}
 
 }

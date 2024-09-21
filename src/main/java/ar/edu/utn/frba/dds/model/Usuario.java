@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.model;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Usuario {
 
@@ -39,6 +40,10 @@ public class Usuario {
 	@Override
 	public String toString() {
 		return "Usuario [usuario=" + nombre + ", capturas=" + capturas + "]";
+	}
+
+	public List<Captura> filtrarPorNombre(String nombre) {
+		return this.capturas.stream().filter(captura -> captura.sePareceNombreA(nombre)).collect(Collectors.toList());
 	}
 
 }

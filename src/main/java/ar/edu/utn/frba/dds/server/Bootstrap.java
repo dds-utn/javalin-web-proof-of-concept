@@ -23,24 +23,21 @@ public class Bootstrap {
 
 	private static List<Pokemon> pokemons() {
 		Pokemon golduck = new Pokemon(TipoPokemon.AGUA, "Golduck", null)
-				.agregarFoto("http://vignette4.wikia.nocookie.net/pokemon/images/0/04/055Golduck_Dream.png/revision/latest?cb=20140828004434")
-				.agregarFoto("http://vignette1.wikia.nocookie.net/pokemon/images/a/a1/Trinity_Golduck.png/revision/latest?cb=20151007060107");
+				.agregarFoto("https://i.pinimg.com/564x/5e/eb/80/5eeb80e6a927f0114c1e42868951d18b.jpg");
 		Pokemon charizard = new Pokemon(TipoPokemon.FUEGO, "Charizard", null)
-				.agregarFoto("http://www.buldumbuldum.com/kisiye_ozel_resimleri/1717cf48ce924b4280e04e2d21b0ccdb.png")
-				.agregarFoto("http://pre13.deviantart.net/4d21/th/pre/i/2015/084/3/4/006_charizard_by_sarahrichford-d8jh1hy.png")
-				.agregarFoto("http://static.srcdn.com/wp-content/uploads/Charizard-flying.jpg");
+				.agregarFoto("https://i.pinimg.com/564x/c2/af/bf/c2afbf85f891b61ac54812e89cedcfd2.jpg");
 		Pokemon charmeleon = new Pokemon(TipoPokemon.FUEGO, "Charmeleon", charizard)
-				.agregarFoto("http://cdn.bulbagarden.net/upload/thumb/4/4a/005Charmeleon.png/250px-005Charmeleon.png");
+				.agregarFoto("https://i.pinimg.com/564x/e8/be/e6/e8bee6e124e0848cd3f99b232011b699.jpg");
 		
 		List<Pokemon> pokemons = Arrays.asList(
 				new Pokemon(TipoPokemon.FUEGO, "Charmander", charmeleon)
-					.agregarFoto("http://cdn.bulbagarden.net/upload/thumb/7/73/004Charmander.png/250px-004Charmander.png"), 
+					.agregarFoto("https://i.pinimg.com/564x/63/63/04/6363049dfea665132eeb278dbda59d68.jpg"),
 				new Pokemon(TipoPokemon.AGUA, "Psyduck", golduck)
-					.agregarFoto("http://vignette1.wikia.nocookie.net/pokemon/images/e/e2/054Psyduck_Pokemon_Mystery_Dungeon_Red_and_Blue_Rescue_Teams.png/revision/latest?cb=20150106002458"), 
+					.agregarFoto("https://cdn.dribbble.com/users/7824408/screenshots/15980091/media/245e0c6058782aaf4311964ebd30b28b.jpg"),
 				new Pokemon(TipoPokemon.NORMAL, "Snorlax", null)
-					.agregarFoto("http://cdn.bulbagarden.net/upload/thumb/f/fb/143Snorlax.png/250px-143Snorlax.png"),
+					.agregarFoto("https://i.pinimg.com/564x/26/65/96/266596b8e9d33571651107d08d7a136b.jpg"),
 				new Pokemon(TipoPokemon.HADA, "Dedenne", null)
-					.agregarFoto("http://vignette2.wikia.nocookie.net/pokemon/images/a/ad/Dedenne_702_XY_AnimeArt.png/revision/latest?cb=20140830063922"),
+					.agregarFoto("https://d.furaffinity.net/art/huiro/1421855255/1421855255.huiro_%E7%94%B5%E5%A5%B6%E5%A5%B6.png"),
 				new Pokemon(TipoPokemon.PSIQUICO, "Mew", null));
 		
 		pokemons.stream().collect(Collectors.toList()).addAll(Arrays.asList(golduck, charizard, charmeleon));

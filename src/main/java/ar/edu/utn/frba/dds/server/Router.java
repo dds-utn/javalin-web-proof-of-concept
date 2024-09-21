@@ -4,7 +4,7 @@ import io.javalin.Javalin;
 
 public class Router {
     public void configure(Javalin app) {
-        UsuarioController controller = new UsuarioController();
-        app.get("/users/random", ctx -> ctx.status(200));
+        HomeController controller = new HomeController();
+        app.get("/home", ctx -> ctx.render("home.hbs", controller.index(ctx)));
     }
 }
