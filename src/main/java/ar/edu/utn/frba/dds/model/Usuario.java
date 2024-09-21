@@ -48,4 +48,8 @@ public class Usuario {
 		return this.capturas.stream().filter(captura -> captura.sePareceNombreA(nombre)).collect(Collectors.toList());
 	}
 
+	public Captura getPokemonCapturado(String apodo) {
+		return this.capturas.stream().filter(captura -> captura.getApodo().equals(apodo)).findFirst().get();
+	}
+
 }

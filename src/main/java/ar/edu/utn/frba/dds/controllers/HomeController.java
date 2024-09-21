@@ -26,4 +26,13 @@ public class HomeController {
 
         return model;
     }
+
+    public Map<String, Object> show(Context ctx) {
+        String apodo = ctx.pathParam("apodo");
+        Map model = new HashMap<>();
+        Usuario usuario = UsuarioRepositorio.INSTANCE.findAny();
+        model.put("usuario", usuario);
+        model.put("captura", usuario.getPokemonCapturado(apodo));
+        return model;
+    }
 }
