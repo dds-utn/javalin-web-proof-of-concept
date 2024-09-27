@@ -37,7 +37,7 @@ public class HomeController implements WithSimplePersistenceUnit, TransactionalO
         return model;
     }
 
-    public void save(Context ctx) {
+    public Map<String, Object> save(Context ctx) {
         String apodo = ctx.formParam("apodo");
         Long id = Long.parseLong(ctx.pathParam("id"));
         Usuario usuario = UsuarioRepositorio.INSTANCE.findAny();
@@ -45,8 +45,10 @@ public class HomeController implements WithSimplePersistenceUnit, TransactionalO
         withTransaction(() -> {
             usuario.getPokemonCapturado(id).setApodo(apodo);
         });
-
-        ctx.result("Guardado!!");
+        Map model = new HashMap<>();
+        model.put("type", "success");
+        model.put("message", "Guardado!!!");
+        return model;
     }
 
     @NotNull

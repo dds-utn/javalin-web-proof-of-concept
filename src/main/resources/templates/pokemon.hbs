@@ -18,14 +18,25 @@
                        {{ else }} no tiene evolución.
                        {{/if}}
                         </div>
-                        <div>
-                            <i> Apodo actual: </i>
-                            <form hx-put="/capturas/{{ captura.id }}" hx-target="#msg-save-apodo">
-                                <input type="text" name="apodo" required value="{{ captura.apodo }}">
-                                <button>Guardar</button>
+                        <p>
+                            <form hx-put="/capturas/{{ captura.id }}" hx-target="#msg-save-apodo" class="row g-3">
+                                <div class="col-auto">
+                                    <label for="apodo-label" class="col-form-label">Apodo actual:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control"
+                                           id="apodo-label"
+                                           class="form-control"
+                                           name="apodo" value="{{ captura.apodo }}"
+                                           placeholder="Ingrese un nuevo apodo..."
+                                           required >
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-outline-primary">Guardar</button>
+                                </div>
                             </form>
                             <span id="msg-save-apodo"/>
-                        </div>
+                        </p>
                    </p>
                  </div>
                </div>
