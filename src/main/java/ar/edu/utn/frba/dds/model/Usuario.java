@@ -42,7 +42,7 @@ public class Usuario extends PersistentObject {
 	}
 
 	public void capturar(Pokemon pokemon) {
-		this.capturas.add(new Captura(pokemon.getNombre(), pokemon, ThreadLocalRandom.current().nextInt(0, 100)));
+		this.capturas.add(new Captura(pokemon, ThreadLocalRandom.current().nextInt(0, 100)));
 	}
 
 	@Override
@@ -54,8 +54,8 @@ public class Usuario extends PersistentObject {
 		return this.capturas.stream().filter(captura -> captura.sePareceNombreA(nombre)).collect(Collectors.toList());
 	}
 
-	public Captura getPokemonCapturado(String apodo) {
-		return this.capturas.stream().filter(captura -> captura.getApodo().equals(apodo)).findFirst().get();
+	public Captura getPokemonCapturado(Long id) {
+		return this.capturas.stream().filter(captura -> captura.getId().equals(id)).findFirst().get();
 	}
 
 }

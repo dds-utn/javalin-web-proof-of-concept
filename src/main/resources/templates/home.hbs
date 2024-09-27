@@ -13,14 +13,22 @@
              <img src="{{ pokemon.principalImage }}" class="card-img-top" alt="{{ pokemon.nombre }}">
              <div class="card-body">
                 <h5 class="card-title">
-                    <a href="./capturas/{{ apodo }}">{{ apodo }}</a>
+                    <a href="./capturas/{{ id }}">
+                        {{#if apodo}}
+                            {{ apodo }}
+                        {{else}}
+                            {{ pokemon.nombre }}
+                        {{/if}}
+                    </a>
                     {{#if nuevo}} <span class="badge rounded-pill bg-info">Nuevo</span> {{/if}}
                 </h5>
                 <p class="card-text">
+                    <div>
                     Tiene un nivel de {{ nivel }}, fue capturado el  {{ fechaCaptura }} y
                     {{#if pokemon.evolucion }} tiene evolución
                     {{ else }} no tiene evolución.
                     {{/if}}
+                    </div>
                 </p>
              </div>
           </div>

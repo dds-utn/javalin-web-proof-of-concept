@@ -19,9 +19,8 @@ public class Captura extends PersistentObject{
 	private int nivel;
 	private LocalDateTime fechaCaptura;
 
-	public Captura(String apodo, Pokemon pokemon, int nivel) {
+	public Captura(Pokemon pokemon, int nivel) {
 		super();
-		this.apodo = apodo;
 		this.pokemon = pokemon;
 		this.nivel = nivel;
 		this.fechaCaptura = RandomDateGenerator.get();
@@ -57,4 +56,7 @@ public class Captura extends PersistentObject{
 		return StringUtils.startsWithIgnoreCase(this.apodo, nombre);
 	}
 
+	public void setApodo(String apodo) {
+		this.apodo = apodo;
+	}
 }

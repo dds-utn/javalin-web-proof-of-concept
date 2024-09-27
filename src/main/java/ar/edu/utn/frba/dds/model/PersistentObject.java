@@ -7,6 +7,14 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class PersistentObject {
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Id @GeneratedValue
     private Long id;
 
