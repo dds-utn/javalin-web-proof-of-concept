@@ -13,13 +13,7 @@
              <img src="{{ pokemon.principalImage }}" class="card-img-top" alt="{{ pokemon.nombre }}">
              <div class="card-body">
                 <h5 class="card-title">
-                    <a href="./capturas/{{ id }}">
-                        {{#if apodo}}
-                            {{ apodo }}
-                        {{else}}
-                            {{ pokemon.nombre }}
-                        {{/if}}
-                    </a>
+                    <a href="./capturas/{{ id }}">{{ pokemon.nombre }}</a>
                     {{#if nuevo}} <span class="badge rounded-pill bg-info">Nuevo</span> {{/if}}
                 </h5>
                 <p class="card-text">

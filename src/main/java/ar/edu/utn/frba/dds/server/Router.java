@@ -14,6 +14,6 @@ public class Router implements SimplePersistenceTest {
         app.get("/", context -> context.redirect("/capturas"));
         app.get("/capturas", ctx -> ctx.render("home.hbs", controller.index(ctx)));
         app.get("/capturas/{id}", ctx -> ctx.render("pokemon.hbs", controller.show(ctx)));
-        app.post("/capturas/{id}", ctx -> ctx.render("pokemon.hbs", controller.save(ctx)));
+        app.put("/capturas/{id}", ctx -> controller.save(ctx));
     }
 }

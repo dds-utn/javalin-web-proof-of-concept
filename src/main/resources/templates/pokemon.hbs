@@ -8,13 +8,7 @@
                <div class="col-md-8">
                  <div class="card-body">
                    <h5 class="card-title">
-                       <a href="/capturas/{{ captura.id }}">
-                       {{#if captura.apodo}}
-                            {{ captura.apodo }}
-                       {{else}}
-                            {{ captura.pokemon.nombre }}
-                       {{/if}}
-                       </a>
+                       <a href="/capturas/{{ captura.id }}"> {{ captura.pokemon.nombre }}</a>
                        {{#if captura.nuevo}} <span class="badge rounded-pill bg-info">Nuevo</span> {{/if}}
                    </h5>
                    <p class="card-text">
@@ -26,10 +20,11 @@
                         </div>
                         <div>
                             <i> Apodo actual: </i>
-                            <form action="/capturas/{{ captura.id }}" method="POST">
-                                <input type="text" name="apodo" required value="{{ captura.apodo }}"></form>
-                                <input type="submit" value="Cambiar"/>
+                            <form hx-put="/capturas/{{ captura.id }}" hx-target="#msg-save-apodo">
+                                <input type="text" name="apodo" required value="{{ captura.apodo }}">
+                                <button>Guardar</button>
                             </form>
+                            <span id="msg-save-apodo"/>
                         </div>
                    </p>
                  </div>
