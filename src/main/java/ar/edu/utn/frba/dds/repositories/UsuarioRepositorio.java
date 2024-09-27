@@ -1,17 +1,17 @@
 package ar.edu.utn.frba.dds.repositories;
 
 import ar.edu.utn.frba.dds.model.Usuario;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class UsuarioRepositorio {
+public class UsuarioRepositorio implements WithSimplePersistenceUnit  {
 
-	private List<Usuario> usuarios = new LinkedList<>();
 	public static UsuarioRepositorio INSTANCE = new UsuarioRepositorio();
 	
 	public Usuario findAny() {
-		return usuarios.stream().findAny().orElse(null);
+		return (Usuario) this.entityManager().createQuery("from Usuario").getResultList().get(0);
 	}
 	
 	public Usuario findByUsername(int username) {
@@ -19,7 +19,7 @@ public class UsuarioRepositorio {
 	}
 
 	public void registrar(Usuario usuario) {
-		usuarios.add(usuario);
+		entityManager().persist(usuario);
 	}
 	
 	

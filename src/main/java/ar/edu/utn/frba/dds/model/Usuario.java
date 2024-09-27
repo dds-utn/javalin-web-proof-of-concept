@@ -1,17 +1,23 @@
 package ar.edu.utn.frba.dds.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public class Usuario {
+@Entity
+public class Usuario extends PersistentObject {
 
 	private String nombre;
 	private String password;
 
+	@OneToMany(cascade = CascadeType.PERSIST)
 	private List<Captura> capturas = new LinkedList<>();
+
+	protected Usuario() { }
 
 	public List<Captura> getCapturas() {
 		return capturas;

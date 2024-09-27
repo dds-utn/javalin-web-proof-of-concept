@@ -1,15 +1,20 @@
 package ar.edu.utn.frba.dds.model;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
+@Entity
+public class Pokemon extends PersistentObject{
 
-public class Pokemon {
-
+	private int pokedexNumber;
 	private TipoPokemon tipo;
 	private String nombre;
+	@OneToOne
 	private Pokemon evolucion;
+	@ElementCollection
 	private List<String> fotos;
-	private int pokedexNumber;
 
 	public Pokemon(int pokedexNumber, String nombre, TipoPokemon tipo, Pokemon evolucion) {
 		super();
@@ -19,6 +24,8 @@ public class Pokemon {
 		this.pokedexNumber = pokedexNumber;
 		this.fotos = new ArrayList<>();
 	}
+
+	protected Pokemon() {	}
 
 	public TipoPokemon getTipo() {
 		return tipo;

@@ -3,13 +3,18 @@ package ar.edu.utn.frba.dds.model;
 import ar.edu.utn.frba.dds.utils.RandomDateGenerator;
 import com.github.jknack.handlebars.internal.lang3.StringUtils;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-public class Captura {
+@Entity
+public class Captura extends PersistentObject{
 
 	private String apodo;
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Pokemon pokemon;
 	private int nivel;
 	private LocalDateTime fechaCaptura;
@@ -21,6 +26,8 @@ public class Captura {
 		this.nivel = nivel;
 		this.fechaCaptura = RandomDateGenerator.get();
 	}
+
+	protected Captura() { }
 
 	public String getApodo() {
 		return apodo;

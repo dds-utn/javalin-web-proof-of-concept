@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.model.Usuario;
 import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.InputStreamReader;
@@ -13,16 +14,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Bootstrap {
-	public static void init() {
-		List<Usuario> usuarios = usuarios();
-		usuarios.forEach((usuario) -> UsuarioRepositorio.INSTANCE.registrar(usuario));
-		
-		List<Pokemon> pokemons = pokemons();
-		
-		Usuario gaston = usuarios.get(0);
-		pokemons.stream().forEach((pokemon) -> gaston.capturar(pokemon));
-		
+public class Bootstrap implements WithSimplePersistenceUnit {
+	public void init() {
+		withTransaction(() -> {
+			List<Usuario> usuarios = usuarios();
+			usuarios.forEach((usuario) -> UsuarioRepositorio.INSTANCE.registrar(usuario));
+
+			List<Pokemon> pokemons = pokemons();
+
+			Usuario gaston = usuarios.get(0);
+			pokemons.stream().forEach((pokemon) -> gaston.capturar(pokemon));
+		});
 	}
 
 	private static List<Pokemon> pokemons() {

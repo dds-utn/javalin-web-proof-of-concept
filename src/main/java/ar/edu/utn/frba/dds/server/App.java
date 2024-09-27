@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.scripts.Bootstrap;
 public class App {
 
     public static void main(String[] args) {
-        Bootstrap.init();
+        new Bootstrap().init();
         new Server().start();
     }
 }
