@@ -1,0 +1,14 @@
+{{#partial "contenido-header"}}
+    Iniciar sesión
+{{/partial}}
+
+{{#partial "contenido"}}
+    <form method="POST" action="/login">
+        <label>Nombre</label><input name="nombre">
+        <label>Password</label><input name="password">
+        <button>Ingresar</button>
+    </form>
+    {{error}}
+{{/partial}}
+
+{{>templates/layout}}
