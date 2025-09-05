@@ -14,6 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Bootstrap implements WithSimplePersistenceUnit {
+  public static void main(String[] args) {
+    new Bootstrap().init();
+  }
+
   public void init() {
     withTransaction(() -> {
       var usuaries = Arrays.asList(
