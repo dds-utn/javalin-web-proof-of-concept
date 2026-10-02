@@ -11,11 +11,11 @@ public class NoticiaRepositorio {
     public static final NoticiaRepositorio INSTANCE = new NoticiaRepositorio();
 
     public List<Noticia> findAll() {
-        return noticias;
+        return noticias.stream().filter(n -> !n.isRetractada()).collect(java.util.stream.Collectors.toList());
     }
 
     public Optional<Noticia> findById(long id) {
-        return noticias.stream().filter(n -> n.getId() == id).findFirst();
+        return noticias.stream().filter(n -> n.getId() == id && !n.isRetractada()).findFirst();
     }
 
     public void registrar(Noticia noticia) {
@@ -23,6 +23,6 @@ public class NoticiaRepositorio {
     }
 
     public void eliminar(long id) {
-        noticias.removeIf(n -> n.getId() == id);
+        noticias.stream().filter(n -> n.getId() == id).findFirst().ifPresent(Noticia::retractar);
     }
 }

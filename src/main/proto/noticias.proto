@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "ar.edu.utn.frba.dds.grpc.proto";
+option java_outer_classname = "NoticiasProto";
+
+package portal.noticias.v1;
+
+message Noticia {
+  int64  id         = 1;
+  string titulo     = 2;
+  string cuerpo     = 3;
+  string autor      = 4;
+  bool   retractada = 5;
+}
+
+message Comentario {
+  int64  id         = 1;
+  int64  noticia_id = 2;
+  string autor      = 3;
+  string texto      = 4;
+}
+
+message ConsultarNoticiaRequest  { int64 id = 1; }
+message PublicarNoticiaRequest   { string titulo = 1; string cuerpo = 2; string autor = 3; }
+message ActualizarNoticiaRequest { int64 id = 1; string titulo = 2; string cuerpo = 3; }
+message RetractarNoticiaRequest  { int64 id = 1; }
+message ComentarNoticiaRequest   { int64 noticia_id = 1; string autor = 2; string texto = 3; }
+message SeguirComentariosRequest { int64 noticia_id = 1; }
+
+service NoticiasService {
+  rpc ConsultarNoticia  (ConsultarNoticiaRequest)  returns (Noticia);
+  rpc PublicarNoticia   (PublicarNoticiaRequest)   returns (Noticia);
+  rpc ActualizarNoticia (ActualizarNoticiaRequest) returns (Noticia);
+  rpc RetractarNoticia  (RetractarNoticiaRequest)  returns (Noticia);
+  rpc ComentarNoticia   (ComentarNoticiaRequest)   returns (Comentario);
+  rpc SeguirComentarios (SeguirComentariosRequest) returns (stream Comentario);
+}

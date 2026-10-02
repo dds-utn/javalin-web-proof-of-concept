@@ -81,6 +81,72 @@ curl -X POST http://localhost:9001/api/noticias/1/comentarios \
   -d '{"autor": "Lector", "contenido": "Muy buena nota."}'
 ```
 
+## Servidor gRPC
+
+El servidor gRPC arranca automáticamente junto con el HTTP, en el puerto **9002**.
+
+El servicio expone los mismos casos de uso que la API REST y además permite suscribirse a los comentarios nuevos de una noticia en tiempo real mediante server-side streaming.
+
+### Métodos disponibles
+
+| RPC | Tipo | Descripción |
+|-----|------|-------------|
+| `ConsultarNoticia` | unario | Devuelve una noticia por ID |
+| `PublicarNoticia` | unario | Crea una noticia nueva |
+| `ActualizarNoticia` | unario | Actualiza título y cuerpo |
+| `RetractarNoticia` | unario | Marca la noticia como retractada y la devuelve |
+| `ComentarNoticia` | unario | Agrega un comentario a una noticia |
+| `SeguirComentarios` | server-streaming | Recibe en tiempo real los comentarios nuevos de una noticia |
+
+### Ejemplos con grpcurl
+
+Instalar `grpcurl`: ver instrucciones en https://github.com/fullstorydev/grpcurl.
+
+El servidor tiene habilitada la reflexión, así que no hace falta especificar el archivo `.proto`.
+
+**Listar los servicios disponibles**
+```bash
+grpcurl -plaintext localhost:9002 list
+```
+
+**Consultar una noticia**
+```bash
+grpcurl -plaintext -d '{"id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/ConsultarNoticia
+```
+
+**Publicar una noticia**
+```bash
+grpcurl -plaintext \
+  -d '{"titulo": "Título de ejemplo", "cuerpo": "Cuerpo de la noticia.", "autor": "Redacción"}' \
+  localhost:9002 portal.noticias.v1.NoticiasService/PublicarNoticia
+```
+
+**Actualizar una noticia**
+```bash
+grpcurl -plaintext \
+  -d '{"id": 1, "titulo": "Título corregido", "cuerpo": "Contenido actualizado."}' \
+  localhost:9002 portal.noticias.v1.NoticiasService/ActualizarNoticia
+```
+
+**Retractar una noticia**
+```bash
+grpcurl -plaintext -d '{"id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/RetractarNoticia
+```
+
+**Comentar una noticia**
+```bash
+grpcurl -plaintext \
+  -d '{"noticia_id": 1, "autor": "Lector", "texto": "Muy buena nota."}' \
+  localhost:9002 portal.noticias.v1.NoticiasService/ComentarNoticia
+```
+
+**Suscribirse a comentarios en tiempo real** (streaming — el proceso queda abierto)
+```bash
+grpcurl -plaintext -d '{"noticia_id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/SeguirComentarios
+```
+
+Mientras ese proceso está abierto, cada nuevo comentario publicado (tanto por HTTP como por gRPC) aparecerá en la salida.
+
 ## Ejecutar tests
 
 ```

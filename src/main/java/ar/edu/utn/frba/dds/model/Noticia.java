@@ -15,6 +15,7 @@ public class Noticia {
     private String contenido;
     private String autor;
     private LocalDateTime fechaPublicacion;
+    private boolean retractada = false;
     private List<Comentario> comentarios = new LinkedList<>();
 
     @JsonCreator
@@ -33,12 +34,15 @@ public class Noticia {
     public String getContenido() { return contenido; }
     public String getAutor() { return autor; }
     public LocalDateTime getFechaPublicacion() { return fechaPublicacion; }
+    public boolean isRetractada() { return retractada; }
     public List<Comentario> getComentarios() { return comentarios; }
 
-    public void actualizar(Noticia cambios) {
-        this.titulo = cambios.titulo;
-        this.contenido = cambios.contenido;
+    public void actualizar(String titulo, String contenido) {
+        this.titulo = titulo;
+        this.contenido = contenido;
     }
+
+    public void retractar() { this.retractada = true; }
 
     public void agregarComentario(Comentario comentario) {
         this.comentarios.add(comentario);

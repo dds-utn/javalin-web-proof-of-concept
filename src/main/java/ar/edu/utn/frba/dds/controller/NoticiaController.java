@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.controller;
 
+import ar.edu.utn.frba.dds.grpc.ComentarioNotificador;
 import ar.edu.utn.frba.dds.model.Comentario;
 import ar.edu.utn.frba.dds.model.Noticia;
 import ar.edu.utn.frba.dds.repositories.NoticiaRepositorio;
@@ -28,7 +29,8 @@ public class NoticiaController {
     public void actualizar(Context ctx) {
         long id = Long.parseLong(ctx.pathParam("id"));
         Noticia noticia = repositorio.findById(id).orElseThrow(NotFoundResponse::new);
-        noticia.actualizar(ctx.bodyAsClass(Noticia.class));
+        Noticia cambios = ctx.bodyAsClass(Noticia.class);
+        noticia.actualizar(cambios.getTitulo(), cambios.getContenido());
         ctx.json(noticia);
     }
 
@@ -44,6 +46,7 @@ public class NoticiaController {
         Noticia noticia = repositorio.findById(id).orElseThrow(NotFoundResponse::new);
         Comentario comentario = ctx.bodyAsClass(Comentario.class);
         noticia.agregarComentario(comentario);
+        ComentarioNotificador.INSTANCE.notificar(id, comentario);
         ctx.status(HttpStatus.CREATED).json(comentario);
     }
 }
