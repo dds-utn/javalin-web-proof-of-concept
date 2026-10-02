@@ -9,6 +9,78 @@ Esta es una plantilla de proyecto diseñada para:
   *  [Entrada de Blog (en español)](https://www.paradigmadigital.com/dev/nos-espera-junit-5/)
 * Maven 3.8.1 o superior
 
+## Iniciar el servidor
+
+```
+mvn compile exec:java -Dexec.mainClass="ar.edu.utn.frba.dds.server.App"
+```
+
+El servidor arranca en `http://localhost:9001`. Al iniciar, imprime por consola las API keys JWT necesarias para los endpoints protegidos:
+
+```
+=== API Keys generadas ===
+admin:  <token>
+editor: <token>
+==========================
+```
+
+Usar el token en el header `Authorization: Bearer <token>` para las operaciones de escritura (POST, PUT, DELETE).
+
+### Endpoints disponibles
+
+| Método | Ruta | Auth | Descripción |
+|--------|------|------|-------------|
+| GET | `/api/noticias` | No | Lista todas las noticias |
+| GET | `/api/noticias/:id` | No | Consulta una noticia por ID |
+| POST | `/api/noticias` | Sí | Publica una noticia nueva |
+| PUT | `/api/noticias/:id` | Sí | Actualiza título y contenido de una noticia |
+| DELETE | `/api/noticias/:id` | Sí | Retracta (elimina) una noticia |
+| POST | `/api/noticias/:id/comentarios` | Sí | Agrega un comentario a una noticia |
+
+### Ejemplos con curl
+
+Reemplazar `<token>` con una de las API keys que imprime el servidor al arrancar.
+
+**Listar todas las noticias**
+```bash
+curl http://localhost:9001/api/noticias
+```
+
+**Consultar una noticia**
+```bash
+curl http://localhost:9001/api/noticias/1
+```
+
+**Publicar una noticia**
+```bash
+curl -X POST http://localhost:9001/api/noticias \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"titulo": "Título de ejemplo", "contenido": "Cuerpo de la noticia.", "autor": "Redacción"}'
+```
+
+**Actualizar una noticia**
+```bash
+curl -X PUT http://localhost:9001/api/noticias/1 \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"titulo": "Título corregido", "contenido": "Contenido actualizado."}'
+```
+
+**Retractar una noticia**
+```bash
+curl -X DELETE http://localhost:9001/api/noticias/1 \
+  -H "Authorization: Bearer <token>"
+```
+
+**Comentar una noticia**
+```bash
+curl -X POST http://localhost:9001/api/noticias/1/comentarios \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"autor": "Lector", "contenido": "Muy buena nota."}'
+```
+
 ## Ejecutar tests
 
 ```
