@@ -21,8 +21,7 @@ public class NoticiasServiceImpl extends NoticiasServiceGrpc.NoticiasServiceImpl
     @Override
     public void consultarNoticia(ConsultarNoticiaRequest req,
                                  StreamObserver<ar.edu.utn.frba.dds.grpc.proto.Noticia> out) {
-        Noticia n = findOrThrow(req.getId());
-        out.onNext(toProto(n));
+        out.onNext(NoticiaMapper.toProto(findOrThrow(req.getId())));
         out.onCompleted();
     }
 
@@ -31,7 +30,7 @@ public class NoticiasServiceImpl extends NoticiasServiceGrpc.NoticiasServiceImpl
                                 StreamObserver<ar.edu.utn.frba.dds.grpc.proto.Noticia> out) {
         Noticia n = new Noticia(req.getTitulo(), req.getCuerpo(), req.getAutor());
         repositorio.registrar(n);
-        out.onNext(toProto(n));
+        out.onNext(NoticiaMapper.toProto(n));
         out.onCompleted();
     }
 
@@ -40,7 +39,7 @@ public class NoticiasServiceImpl extends NoticiasServiceGrpc.NoticiasServiceImpl
                                   StreamObserver<ar.edu.utn.frba.dds.grpc.proto.Noticia> out) {
         Noticia n = findOrThrow(req.getId());
         n.actualizar(req.getTitulo(), req.getCuerpo());
-        out.onNext(toProto(n));
+        out.onNext(NoticiaMapper.toProto(n));
         out.onCompleted();
     }
 
@@ -49,7 +48,7 @@ public class NoticiasServiceImpl extends NoticiasServiceGrpc.NoticiasServiceImpl
                                  StreamObserver<ar.edu.utn.frba.dds.grpc.proto.Noticia> out) {
         Noticia n = findOrThrow(req.getId());
         n.retractar();
-        out.onNext(toProto(n));
+        out.onNext(NoticiaMapper.toProto(n));
         out.onCompleted();
     }
 
@@ -61,7 +60,7 @@ public class NoticiasServiceImpl extends NoticiasServiceGrpc.NoticiasServiceImpl
         Comentario c = new Comentario(req.getAutor(), req.getTexto());
         n.agregarComentario(c);
         ComentarioNotificador.INSTANCE.notificar(noticiaId, c);
-        out.onNext(toProto(noticiaId, c));
+        out.onNext(NoticiaMapper.toProto(noticiaId, c));
         out.onCompleted();
     }
 
@@ -77,7 +76,7 @@ public class NoticiasServiceImpl extends NoticiasServiceGrpc.NoticiasServiceImpl
 
         Runnable desregistrar = ComentarioNotificador.INSTANCE.registrar(noticiaId, c -> {
             if (!serverOut.isCancelled()) {
-                serverOut.onNext(toProto(noticiaId, c));
+                serverOut.onNext(NoticiaMapper.toProto(noticiaId, c));
             }
         });
 
@@ -87,24 +86,5 @@ public class NoticiasServiceImpl extends NoticiasServiceGrpc.NoticiasServiceImpl
     private Noticia findOrThrow(long id) {
         return repositorio.findById(id)
             .orElseThrow(() -> new StatusRuntimeException(Status.NOT_FOUND));
-    }
-
-    private ar.edu.utn.frba.dds.grpc.proto.Noticia toProto(Noticia n) {
-        return ar.edu.utn.frba.dds.grpc.proto.Noticia.newBuilder()
-            .setId(n.getId())
-            .setTitulo(n.getTitulo())
-            .setCuerpo(n.getContenido())
-            .setAutor(n.getAutor())
-            .setRetractada(n.isRetractada())
-            .build();
-    }
-
-    private ar.edu.utn.frba.dds.grpc.proto.Comentario toProto(long noticiaId, Comentario c) {
-        return ar.edu.utn.frba.dds.grpc.proto.Comentario.newBuilder()
-            .setId(c.getId())
-            .setNoticiaId(noticiaId)
-            .setAutor(c.getAutor())
-            .setTexto(c.getContenido())
-            .build();
     }
 }

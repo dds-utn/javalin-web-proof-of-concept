@@ -26,7 +26,8 @@ message PublicarNoticiaRequest   { string titulo = 1; string cuerpo = 2; string 
 message ActualizarNoticiaRequest { int64 id = 1; string titulo = 2; string cuerpo = 3; }
 message RetractarNoticiaRequest  { int64 id = 1; }
 message ComentarNoticiaRequest   { int64 noticia_id = 1; string autor = 2; string texto = 3; }
-message SeguirComentariosRequest { int64 noticia_id = 1; }
+message SeguirComentariosRequest  { int64 noticia_id = 1; }
+message ListarNoticiasResponse    { repeated Noticia noticias = 1; }
 
 service NoticiasService {
   rpc ConsultarNoticia  (ConsultarNoticiaRequest)  returns (Noticia);

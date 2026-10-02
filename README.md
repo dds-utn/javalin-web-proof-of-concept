@@ -37,21 +37,32 @@ Usar el token en el header `Authorization: Bearer <token>` para las operaciones 
 | DELETE | `/api/noticias/:id` | Sí | Retracta (elimina) una noticia |
 | POST | `/api/noticias/:id/comentarios` | Sí | Agrega un comentario a una noticia |
 
+### Negociación de contenido
+
+Todos los endpoints soportan JSON (por defecto) y Protocol Buffers. Usar el header `Accept` para seleccionar el formato:
+
+| `Accept` | Formato de respuesta |
+|----------|----------------------|
+| `application/json` (o ausente) | JSON |
+| `application/x-protobuf` | Protocol Buffers binario |
+
+Las estructuras protobuf son las mismas definidas en `src/main/proto/noticias.proto`. El endpoint `GET /api/noticias` responde con `ListarNoticiasResponse`; el resto responde con `Noticia` o `Comentario` según corresponda.
+
 ### Ejemplos con curl
 
 Reemplazar `<token>` con una de las API keys que imprime el servidor al arrancar.
 
-**Listar todas las noticias**
+#### Listar todas las noticias
 ```bash
 curl http://localhost:9001/api/noticias
 ```
 
-**Consultar una noticia**
+#### Consultar una noticia
 ```bash
 curl http://localhost:9001/api/noticias/1
 ```
 
-**Publicar una noticia**
+#### Publicar una noticia
 ```bash
 curl -X POST http://localhost:9001/api/noticias \
   -H "Authorization: Bearer <token>" \
@@ -59,7 +70,7 @@ curl -X POST http://localhost:9001/api/noticias \
   -d '{"titulo": "Título de ejemplo", "contenido": "Cuerpo de la noticia.", "autor": "Redacción"}'
 ```
 
-**Actualizar una noticia**
+#### Actualizar una noticia
 ```bash
 curl -X PUT http://localhost:9001/api/noticias/1 \
   -H "Authorization: Bearer <token>" \
@@ -67,18 +78,35 @@ curl -X PUT http://localhost:9001/api/noticias/1 \
   -d '{"titulo": "Título corregido", "contenido": "Contenido actualizado."}'
 ```
 
-**Retractar una noticia**
+#### Retractar una noticia
 ```bash
 curl -X DELETE http://localhost:9001/api/noticias/1 \
   -H "Authorization: Bearer <token>"
 ```
 
-**Comentar una noticia**
+#### Comentar una noticia
 ```bash
 curl -X POST http://localhost:9001/api/noticias/1/comentarios \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"autor": "Lector", "contenido": "Muy buena nota."}'
+```
+
+#### Consultar una noticia en formato protobuf
+```bash
+curl -H "Accept: application/x-protobuf" http://localhost:9001/api/noticias/1 --output noticia.bin
+```
+
+Para decodificar la respuesta binaria con `protoc`:
+```bash
+curl -s -H "Accept: application/x-protobuf" http://localhost:9001/api/noticias/1 \
+  | protoc --decode=portal.noticias.v1.Noticia src/main/proto/noticias.proto
+```
+
+#### Listar noticias en formato protobuf
+```bash
+curl -s -H "Accept: application/x-protobuf" http://localhost:9001/api/noticias \
+  | protoc --decode=portal.noticias.v1.ListarNoticiasResponse src/main/proto/noticias.proto
 ```
 
 ## Servidor gRPC
@@ -110,17 +138,17 @@ Los métodos de escritura requieren autenticación. Copiar el token que imprime 
 TOKEN=<token impreso al arrancar>
 ```
 
-**Listar los servicios disponibles**
+#### Listar los servicios disponibles
 ```bash
 grpcurl -plaintext localhost:9002 list
 ```
 
-**Consultar una noticia** (sin auth)
+#### Consultar una noticia (sin auth)
 ```bash
 grpcurl -plaintext -d '{"id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/ConsultarNoticia
 ```
 
-**Publicar una noticia** (requiere auth)
+#### Publicar una noticia (requiere auth)
 ```bash
 grpcurl -plaintext \
   -H "authorization: Bearer $TOKEN" \
@@ -128,7 +156,7 @@ grpcurl -plaintext \
   localhost:9002 portal.noticias.v1.NoticiasService/PublicarNoticia
 ```
 
-**Actualizar una noticia** (requiere auth)
+#### Actualizar una noticia (requiere auth)
 ```bash
 grpcurl -plaintext \
   -H "authorization: Bearer $TOKEN" \
@@ -136,7 +164,7 @@ grpcurl -plaintext \
   localhost:9002 portal.noticias.v1.NoticiasService/ActualizarNoticia
 ```
 
-**Retractar una noticia** (requiere auth)
+#### Retractar una noticia (requiere auth)
 ```bash
 grpcurl -plaintext \
   -H "authorization: Bearer $TOKEN" \
@@ -144,7 +172,7 @@ grpcurl -plaintext \
   localhost:9002 portal.noticias.v1.NoticiasService/RetractarNoticia
 ```
 
-**Comentar una noticia** (requiere auth)
+#### Comentar una noticia (requiere auth)
 ```bash
 grpcurl -plaintext \
   -H "authorization: Bearer $TOKEN" \
@@ -152,7 +180,7 @@ grpcurl -plaintext \
   localhost:9002 portal.noticias.v1.NoticiasService/ComentarNoticia
 ```
 
-**Suscribirse a comentarios en tiempo real** (sin auth — streaming, el proceso queda abierto)
+#### Suscribirse a comentarios en tiempo real (sin auth — streaming, el proceso queda abierto)
 ```bash
 grpcurl -plaintext -d '{"noticia_id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/SeguirComentarios
 ```
