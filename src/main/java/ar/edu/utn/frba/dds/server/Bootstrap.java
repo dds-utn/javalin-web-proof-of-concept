@@ -6,7 +6,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
 public class Bootstrap {
-    static final String JWT_SECRET = "secreto-noticias-api-dds-utn";
+    public static final String JWT_SECRET = "secreto-noticias-api-dds-utn";
 
     public static void init() {
         NoticiaRepositorio repositorio = NoticiaRepositorio.INSTANCE;

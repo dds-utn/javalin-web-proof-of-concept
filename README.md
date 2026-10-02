@@ -104,43 +104,55 @@ Instalar `grpcurl`: ver instrucciones en https://github.com/fullstorydev/grpcurl
 
 El servidor tiene habilitada la reflexión, así que no hace falta especificar el archivo `.proto`.
 
+Los métodos de escritura requieren autenticación. Copiar el token que imprime el servidor al arrancar y guardarlo en una variable:
+
+```bash
+TOKEN=<token impreso al arrancar>
+```
+
 **Listar los servicios disponibles**
 ```bash
 grpcurl -plaintext localhost:9002 list
 ```
 
-**Consultar una noticia**
+**Consultar una noticia** (sin auth)
 ```bash
 grpcurl -plaintext -d '{"id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/ConsultarNoticia
 ```
 
-**Publicar una noticia**
+**Publicar una noticia** (requiere auth)
 ```bash
 grpcurl -plaintext \
+  -H "authorization: Bearer $TOKEN" \
   -d '{"titulo": "Título de ejemplo", "cuerpo": "Cuerpo de la noticia.", "autor": "Redacción"}' \
   localhost:9002 portal.noticias.v1.NoticiasService/PublicarNoticia
 ```
 
-**Actualizar una noticia**
+**Actualizar una noticia** (requiere auth)
 ```bash
 grpcurl -plaintext \
+  -H "authorization: Bearer $TOKEN" \
   -d '{"id": 1, "titulo": "Título corregido", "cuerpo": "Contenido actualizado."}' \
   localhost:9002 portal.noticias.v1.NoticiasService/ActualizarNoticia
 ```
 
-**Retractar una noticia**
-```bash
-grpcurl -plaintext -d '{"id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/RetractarNoticia
-```
-
-**Comentar una noticia**
+**Retractar una noticia** (requiere auth)
 ```bash
 grpcurl -plaintext \
+  -H "authorization: Bearer $TOKEN" \
+  -d '{"id": 1}' \
+  localhost:9002 portal.noticias.v1.NoticiasService/RetractarNoticia
+```
+
+**Comentar una noticia** (requiere auth)
+```bash
+grpcurl -plaintext \
+  -H "authorization: Bearer $TOKEN" \
   -d '{"noticia_id": 1, "autor": "Lector", "texto": "Muy buena nota."}' \
   localhost:9002 portal.noticias.v1.NoticiasService/ComentarNoticia
 ```
 
-**Suscribirse a comentarios en tiempo real** (streaming — el proceso queda abierto)
+**Suscribirse a comentarios en tiempo real** (sin auth — streaming, el proceso queda abierto)
 ```bash
 grpcurl -plaintext -d '{"noticia_id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/SeguirComentarios
 ```
