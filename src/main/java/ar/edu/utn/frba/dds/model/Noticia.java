@@ -6,45 +6,86 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 public class Noticia {
-    private static long nextId = 1;
+  private static final Map<Long, List<Consumer<Comentario>>> listeners =
+      new ConcurrentHashMap<>();
+  private static long nextId = 1;
+  private long id;
+  private String titulo;
+  private String contenido;
+  private String autor;
+  private LocalDateTime fechaPublicacion;
+  private boolean retractada = false;
+  private List<Comentario> comentarios = new LinkedList<>();
 
-    private long id;
-    private String titulo;
-    private String contenido;
-    private String autor;
-    private LocalDateTime fechaPublicacion;
-    private boolean retractada = false;
-    private List<Comentario> comentarios = new LinkedList<>();
+  @JsonCreator
+  public Noticia(@JsonProperty("titulo") String titulo,
+                 @JsonProperty("contenido") String contenido,
+                 @JsonProperty("autor") String autor) {
+    this.id = nextId++;
+    this.titulo = titulo;
+    this.contenido = contenido;
+    this.autor = autor;
+    this.fechaPublicacion = LocalDateTime.now();
+  }
 
-    @JsonCreator
-    public Noticia(@JsonProperty("titulo") String titulo,
-                   @JsonProperty("contenido") String contenido,
-                   @JsonProperty("autor") String autor) {
-        this.id = nextId++;
-        this.titulo = titulo;
-        this.contenido = contenido;
-        this.autor = autor;
-        this.fechaPublicacion = LocalDateTime.now();
-    }
+  public long getId() {
+    return id;
+  }
 
-    public long getId() { return id; }
-    public String getTitulo() { return titulo; }
-    public String getContenido() { return contenido; }
-    public String getAutor() { return autor; }
-    public LocalDateTime getFechaPublicacion() { return fechaPublicacion; }
-    public boolean isRetractada() { return retractada; }
-    public List<Comentario> getComentarios() { return comentarios; }
+  public String getTitulo() {
+    return titulo;
+  }
 
-    public void actualizar(String titulo, String contenido) {
-        this.titulo = titulo;
-        this.contenido = contenido;
-    }
+  public String getContenido() {
+    return contenido;
+  }
 
-    public void retractar() { this.retractada = true; }
+  public String getAutor() {
+    return autor;
+  }
 
-    public void agregarComentario(Comentario comentario) {
-        this.comentarios.add(comentario);
-    }
+  public LocalDateTime getFechaPublicacion() {
+    return fechaPublicacion;
+  }
+
+  public boolean isRetractada() {
+    return retractada;
+  }
+
+  public List<Comentario> getComentarios() {
+    return comentarios;
+  }
+
+  public void actualizar(String titulo, String contenido) {
+    this.titulo = titulo;
+    this.contenido = contenido;
+  }
+
+  public void retractar() {
+    this.retractada = true;
+  }
+
+  public void agregarComentario(Comentario comentario) {
+    this.comentarios.add(comentario);
+  }
+
+  public void notificarComentario(Comentario comentario) {
+    List<Consumer<Comentario>> list = listeners.get(id);
+    if (list != null) list.forEach(l -> l.accept(comentario));
+  }
+
+  public void anteComentario(Consumer<Comentario> listener) {
+    listeners.computeIfAbsent(id, k -> new CopyOnWriteArrayList<>()).add(listener);
+  }
+
+  public void quitarAnteComentario(Consumer<Comentario> anteComentario) {
+    List<Consumer<Comentario>> list = listeners.get(id);
+    if (list != null) list.remove(anteComentario);
+  }
 }

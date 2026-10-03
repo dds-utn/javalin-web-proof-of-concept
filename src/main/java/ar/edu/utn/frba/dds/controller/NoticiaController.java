@@ -1,12 +1,11 @@
 package ar.edu.utn.frba.dds.controller;
 
-import ar.edu.utn.frba.dds.grpc.ComentarioNotificador;
-import ar.edu.utn.frba.dds.grpc.NoticiaMapper;
+import ar.edu.utn.frba.dds.protobuf.ComentarioMapper;
+import ar.edu.utn.frba.dds.protobuf.NoticiaMapper;
 import ar.edu.utn.frba.dds.model.Comentario;
 import ar.edu.utn.frba.dds.model.Noticia;
 import ar.edu.utn.frba.dds.repositories.NoticiaRepositorio;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -62,15 +61,15 @@ public class NoticiaController {
         Noticia noticia = repositorio.findById(id).orElseThrow(NotFoundResponse::new);
         Comentario comentario = ctx.bodyAsClass(Comentario.class);
         noticia.agregarComentario(comentario);
-        ComentarioNotificador.INSTANCE.notificar(id, comentario);
+        noticia.notificarComentario(comentario);
         ctx.status(HttpStatus.CREATED);
-        responder(ctx, comentario, c -> NoticiaMapper.toProto(id, c));
+        responder(ctx, comentario, c -> ComentarioMapper.toProto(c));
     }
 
     public void seguirComentarios(SseClient client) {
         long id = Long.parseLong(client.ctx().pathParam("id"));
-
-        if (repositorio.findById(id).isEmpty()) {
+        var noticia = repositorio.findById(id);
+        if (noticia.isEmpty()) {
             client.sendEvent("error", "{\"mensaje\":\"Noticia no encontrada\"}");
             client.close();
             return;
@@ -86,13 +85,13 @@ public class NoticiaController {
             client.sendComment("keep-alive");
         }, 30, 30, TimeUnit.SECONDS);
 
+        var anteComentario = notificarComentario(client);
         client.onClose(() -> {
-            // TODO desregistrar
+            noticia.get().quitarAnteComentario(anteComentario);
             keepAlive.shutdown();
         });
 
-        // TODO mover esto al repositorio u objeto
-        ComentarioNotificador.INSTANCE.registrar(id, notificarComentario(client));
+        noticia.get().anteComentario(anteComentario);
         client.keepAlive();
     }
 
@@ -114,6 +113,8 @@ public class NoticiaController {
         if (PROTOBUF.equals(ctx.header("Accept"))) {
             ctx.result(toProto.apply(respuesta).toByteArray()).contentType(PROTOBUF);
         } else {
+            // Asumimos application/json
+            // Aunque bien podríamos chequearlo
             ctx.json(respuesta);
         }
     }

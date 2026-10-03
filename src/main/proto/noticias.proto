@@ -16,7 +16,6 @@ message Noticia {
 
 message Comentario {
   int64  id         = 1;
-  int64  noticia_id = 2;
   string autor      = 3;
   string texto      = 4;
 }
