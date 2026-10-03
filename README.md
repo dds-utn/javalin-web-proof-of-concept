@@ -1,13 +1,6 @@
-# java-base-project
+# Portal de Noticias - API
 
-Esta es una plantilla de proyecto diseñada para: 
-
-* Java 17. :warning: Si bien el proyecto no lo limita explícitamente, el comando `mvn verify` no funcionará con versiones más antiguas de Java. 
-* JUnit 5. :warning: La versión 5 de JUnit es la más nueva del framework y presenta algunas diferencias respecto a la versión "clásica" (JUnit 4). Para mayores detalles, ver: 
-  *  [Apunte de herramientas](https://docs.google.com/document/d/1VYBey56M0UU6C0689hAClAvF9ILE6E7nKIuOqrRJnWQ/edit#heading=h.dnwhvummp994)
-  *  [Entrada de Blog (en inglés)](https://www.baeldung.com/junit-5-migration) 
-  *  [Entrada de Blog (en español)](https://www.paradigmadigital.com/dev/nos-espera-junit-5/)
-* Maven 3.8.1 o superior
+Requiere Java 17 y Maven 3.8.1 o superior.
 
 ## Iniciar el servidor
 
@@ -36,6 +29,7 @@ Usar el token en el header `Authorization: Bearer <token>` para las operaciones 
 | PUT | `/api/noticias/:id` | Sí | Actualiza título y contenido de una noticia |
 | DELETE | `/api/noticias/:id` | Sí | Retracta (elimina) una noticia |
 | POST | `/api/noticias/:id/comentarios` | Sí | Agrega un comentario a una noticia |
+| GET | `/api/noticias/:id/comentarios/eventos` | No | Stream SSE de comentarios nuevos |
 
 ### Negociación de contenido
 
@@ -91,6 +85,41 @@ curl -X POST http://localhost:9001/api/noticias/1/comentarios \
   -H "Content-Type: application/json" \
   -d '{"autor": "Lector", "contenido": "Muy buena nota."}'
 ```
+
+#### Seguir comentarios en tiempo real (SSE)
+
+Abre una conexión `text/event-stream` que permanece abierta. Cada comentario nuevo llega como un evento nombrado:
+
+```
+event: comentario
+data: {"id":1,"autor":"Lector","contenido":"Muy buena nota."}
+```
+
+El servidor envía un comentario SSE de keep-alive cada ~30 segundos para mantener la conexión activa a través de proxies:
+
+```
+: keep-alive
+```
+
+```bash
+curl -iN -H "Accept: text/event-stream"  http://localhost:9001/api/noticias/1/comentarios/eventos
+```
+
+```
+HTTP/1.1 200 OK
+Date: Sat, 03 Oct 2026 21:57:13 GMT
+Content-Type: text/event-stream;charset=utf-8
+Connection: close
+Cache-Control: no-cache
+X-Accel-Buffering: no
+
+: hello
+event: comentario
+data: {"autor":"Lector","contenido":"Muy buena nota.","id":1}
+
+: keep-alive
+```
+
 
 #### Consultar una noticia en formato protobuf
 ```bash
@@ -180,7 +209,7 @@ grpcurl -plaintext \
   localhost:9002 portal.noticias.v1.NoticiasService/ComentarNoticia
 ```
 
-#### Suscribirse a comentarios en tiempo real (sin auth — streaming, el proceso queda abierto)
+#### Suscribirse a comentarios en tiempo real (sin auth, streaming, el proceso queda abierto)
 ```bash
 grpcurl -plaintext -d '{"noticia_id": 1}' localhost:9002 portal.noticias.v1.NoticiasService/SeguirComentarios
 ```
@@ -191,28 +220,6 @@ Mientras ese proceso está abierto, cada nuevo comentario publicado (tanto por H
 
 ```
 mvn test
-```
-
-## Validar el proyecto de forma exahustiva
-
-```
-mvn clean verify
-```
-
-Este comando hará lo siguiente:
-
- 1. Ejecutará los tests
- 2. Validará las convenciones de formato mediante checkstyle
- 3. Detectará la presencia de (ciertos) code smells
- 4. Validará la cobertura del proyecto
-
-## Entrega del proyecto
-
-Para entregar el proyecto, crear un tag llamado `entrega-final`. Es importante que antes de realizarlo se corra la validación
-explicada en el punto anterior. Se recomienda hacerlo de la siguiente forma:
-
-```
-mvn clean verify && git tag entrega-final && git push origin HEAD --tags
 ```
 
 ## Configuración del IDE (IntelliJ)

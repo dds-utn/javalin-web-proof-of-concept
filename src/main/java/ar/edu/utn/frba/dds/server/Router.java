@@ -28,5 +28,6 @@ public class Router {
         app.put("/api/noticias/{id}", controller::actualizar);
         app.delete("/api/noticias/{id}", controller::retractar);
         app.post("/api/noticias/{id}/comentarios", controller::comentar);
+        app.sse("/api/noticias/{id}/comentarios/eventos", controller::seguirComentarios);
     }
 }
