@@ -92,10 +92,12 @@ curl -X POST http://localhost:9001/api/noticias/1/comentarios \
 Registra una URL que recibirá un `POST` con el cuerpo de la noticia en JSON cada vez que se publique una nueva. Solo el token `admin` puede registrar webhooks.
 
 ```bash
+# nota: para la URL se puede crear un servidor adicional o crear 
+# una por ejemplo en https://webhook.site/
 curl -X POST http://localhost:9001/api/noticias/webhooks \
   -H "Authorization: Bearer <token-admin>" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://ejemplo.com/mi-webhook"}'
+  -d '{"url": "<URL>"}' 
 ```
 
 Payload que recibe el webhook al publicarse una noticia:
