@@ -17,12 +17,13 @@ public class NoticiaMapper {
             .build();
     }
 
-    public static ar.edu.utn.frba.dds.grpc.proto.Comentario toProto(long noticiaId, Comentario c) {
+    public static ar.edu.utn.frba.dds.grpc.proto.Comentario toProto(long noticiaId, Comentario comentario) {
         return ar.edu.utn.frba.dds.grpc.proto.Comentario.newBuilder()
-            .setId(c.getId())
+            .setId(comentario.getId())
+            // TODO remover de acá
             .setNoticiaId(noticiaId)
-            .setAutor(c.getAutor())
-            .setTexto(c.getContenido())
+            .setAutor(comentario.getAutor())
+            .setTexto(comentario.getContenido())
             .build();
     }
 

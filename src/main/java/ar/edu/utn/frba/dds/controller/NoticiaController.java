@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.model.Comentario;
 import ar.edu.utn.frba.dds.model.Noticia;
 import ar.edu.utn.frba.dds.repositories.NoticiaRepositorio;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class NoticiaController {
     private static final String PROTOBUF = "application/x-protobuf";
@@ -24,20 +26,20 @@ public class NoticiaController {
 
     public void listar(Context ctx) {
         List<Noticia> noticias = repositorio.findAll();
-        responder(ctx, noticias, NoticiaMapper.toProtoList(noticias));
+        responder(ctx, noticias, NoticiaMapper::toProtoList);
     }
 
     public void obtener(Context ctx) {
         long id = Long.parseLong(ctx.pathParam("id"));
         Noticia noticia = repositorio.findById(id).orElseThrow(NotFoundResponse::new);
-        responder(ctx, noticia, NoticiaMapper.toProto(noticia));
+        responder(ctx, noticia, NoticiaMapper::toProto);
     }
 
     public void publicar(Context ctx) {
         Noticia noticia = ctx.bodyAsClass(Noticia.class);
         repositorio.registrar(noticia);
         ctx.status(HttpStatus.CREATED);
-        responder(ctx, noticia, NoticiaMapper.toProto(noticia));
+        responder(ctx, noticia, NoticiaMapper::toProto);
     }
 
     public void actualizar(Context ctx) {
@@ -45,7 +47,7 @@ public class NoticiaController {
         Noticia noticia = repositorio.findById(id).orElseThrow(NotFoundResponse::new);
         Noticia cambios = ctx.bodyAsClass(Noticia.class);
         noticia.actualizar(cambios.getTitulo(), cambios.getContenido());
-        responder(ctx, noticia, NoticiaMapper.toProto(noticia));
+        responder(ctx, noticia, NoticiaMapper::toProto);
     }
 
     public void retractar(Context ctx) {
@@ -62,7 +64,7 @@ public class NoticiaController {
         noticia.agregarComentario(comentario);
         ComentarioNotificador.INSTANCE.notificar(id, comentario);
         ctx.status(HttpStatus.CREATED);
-        responder(ctx, comentario, NoticiaMapper.toProto(id, comentario));
+        responder(ctx, comentario, c -> NoticiaMapper.toProto(id, c));
     }
 
     public void seguirComentarios(SseClient client) {
@@ -107,12 +109,12 @@ public class NoticiaController {
         };
     }
 
-    // TODO hacerlo lazy
-    private void responder(Context ctx, Object domainObj, MessageLite proto) {
+    // TODO este código es genérico y podría reutilizarse fácilmente en otros controladores
+    private <T> void responder(Context ctx, T respuesta, Function<T, MessageLite> toProto) {
         if (PROTOBUF.equals(ctx.header("Accept"))) {
-            ctx.result(proto.toByteArray()).contentType(PROTOBUF);
+            ctx.result(toProto.apply(respuesta).toByteArray()).contentType(PROTOBUF);
         } else {
-            ctx.json(domainObj);
+            ctx.json(respuesta);
         }
     }
 }
