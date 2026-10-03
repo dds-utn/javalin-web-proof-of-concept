@@ -30,6 +30,7 @@ Usar el token en el header `Authorization: Bearer <token>` para las operaciones 
 | DELETE | `/api/noticias/:id` | Sí | Retracta (elimina) una noticia |
 | POST | `/api/noticias/:id/comentarios` | Sí | Agrega un comentario a una noticia |
 | GET | `/api/noticias/:id/comentarios/eventos` | No | Stream SSE de comentarios nuevos |
+| POST | `/api/noticias/webhooks` | Solo admin | Registra un webhook para nuevas noticias |
 
 ### Negociación de contenido
 
@@ -85,6 +86,33 @@ curl -X POST http://localhost:9001/api/noticias/1/comentarios \
   -H "Content-Type: application/json" \
   -d '{"autor": "Lector", "contenido": "Muy buena nota."}'
 ```
+
+#### Registrar un webhook
+
+Registra una URL que recibirá un `POST` con el cuerpo de la noticia en JSON cada vez que se publique una nueva. Solo el token `admin` puede registrar webhooks.
+
+```bash
+curl -X POST http://localhost:9001/api/noticias/webhooks \
+  -H "Authorization: Bearer <token-admin>" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://ejemplo.com/mi-webhook"}'
+```
+
+Payload que recibe el webhook al publicarse una noticia:
+
+```json
+{
+  "id": 3,
+  "titulo": "Título de ejemplo",
+  "contenido": "Cuerpo de la noticia.",
+  "autor": "Redacción",
+  "fechaPublicacion": "2026-10-03T12:00:00",
+  "retractada": false,
+  "comentarios": []
+}
+```
+
+El envío es asíncrono con timeout de 5 segundos. Si el endpoint no responde, el error se ignora silenciosamente.
 
 #### Seguir comentarios en tiempo real (SSE)
 
